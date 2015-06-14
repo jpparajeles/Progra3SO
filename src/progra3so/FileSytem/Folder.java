@@ -5,6 +5,7 @@
  */
 package progra3so.FileSytem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,14 +17,12 @@ public class Folder extends Node {
 
     public Folder(String name) {
         super(name);
+        children = new ArrayList<Node>();
     }
 
     public List<Node> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Node> children) {
-        this.children = children;
-    }
     
 }
