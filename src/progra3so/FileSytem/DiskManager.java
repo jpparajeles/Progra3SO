@@ -23,7 +23,7 @@ public class DiskManager {
     {
         disk = new Disk(url, SegQ, SegL);
         freesectors = new Stack<>();
-        for( int i =SegQ; i>0;i--)
+        for( int i=(SegQ-1); i>=0;i--)
         {
             freesectors.push(i);
         }
@@ -32,11 +32,15 @@ public class DiskManager {
     {
         int qsectors = (int) Math.ceil((double)text.length()/(double)disk.getSectorL());
         List<Integer> ret = new ArrayList<>(qsectors);
+        String sector;
         for(int i=0; i<qsectors; i++)
         {
+            sector = "";
             int val = freesectors.pop();
             disk.errase(val);
-            disk.writeSector(val,text.substring(i, Math.min(i + disk.getSectorL(),text.length())));
+            int lengS = disk.getSectorL();
+            sector = text.substring(i*lengS, Math.min((i+1) * lengS,text.length()));
+            disk.writeSector(val,sector);
             ret.add(val);
         }
         return ret;
@@ -50,5 +54,13 @@ public class DiskManager {
             ret = ret.concat(disk.readSector(i));
         }
         return ret;
+    }
+    public void DeleteFile(List<Integer> sectors) throws IOException
+    {
+        for (int i=sectors.size()-1; i>=0;i--)
+        {
+            disk.errase(sectors.get(i));
+            freesectors.push(sectors.get(i));
+        }
     }
 }

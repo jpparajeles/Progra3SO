@@ -8,6 +8,8 @@ package progra3so.FileSytem;
 import static java.nio.file.StandardOpenOption.*;
 import java.nio.file.*;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 
 /**
@@ -18,18 +20,27 @@ public class Disk {
     private final String url;
     private final int SectorQ;
     private final int SectorL;
-    private final OutputStream out;
-    private final InputStream in;
-    //private FileStream disk;
+    FileChannel fc;
+    ByteBuffer deleter;
+    
+    
 
-    public Disk(String url, int SectorQ, int SectorL) throws IOException {
+    public Disk(String url, int SectorQ, int SectorL) throws IOException
+    {
         this.url = url;
         this.SectorQ = SectorQ;
         this.SectorL = SectorL;
+        Path file = Paths.get(url);
+        this.fc = FileChannel.open(file, READ, WRITE);
         
-        Path p = Paths.get(url);
-        this.out = new BufferedOutputStream(Files.newOutputStream(p, CREATE, APPEND));
-        this.in = new BufferedInputStream(Files.newInputStream(p, CREATE));
+        String data = "";
+        for (int j = 0; j<SectorL;j++)
+        {
+            data = data.concat(" ");
+        }
+        byte[] bytes = data.getBytes("UTF-8");
+        this.deleter = ByteBuffer.wrap(bytes);
+                
         format();
     }
 
@@ -45,39 +56,43 @@ public class Disk {
         return SectorL;
     }
     
-    public String readSector(int sectorNum) throws IOException
+    public String readSector(int sectorNum) throws IOException  
     {
-        byte b[] = null;
-        in.read(b, sectorNum*SectorL, SectorL);
-        return new String(b,"UTF-8");
+        ByteBuffer copy = ByteBuffer.allocate(SectorL);
+        fc.position(SectorL*sectorNum);
+        int nread;
+        do
+        {
+            nread = fc.read(copy);
+        } while (nread != -1 && copy.hasRemaining());
+        return new String(copy.array(),"UTF-8");
+           
     }
-    public void writeSector(int sectorNum, String data) throws UnsupportedEncodingException, IOException
+    public void writeSector(int sectorNum, String data) throws IOException 
     {
-        out.write(data.getBytes("UTF-8"), sectorNum*SectorL, SectorL);
-    }
-    
-    private void format() throws UnsupportedEncodingException, IOException
-    {
-        String data = "";
-        for (int j = 0; j<SectorL;j++)
+        while(data.length()<SectorL)
         {
             data = data.concat(" ");
         }
         
-        for(int i = 0; i<SectorQ;i++ )
+        fc.position(sectorNum*SectorL);
+        byte[] bytes = data.getBytes("UTF-8");
+        ByteBuffer wrap = ByteBuffer.wrap(bytes);
+        fc.write(wrap);
+    }
+    
+    private void format() throws UnsupportedEncodingException, IOException 
+    {
+        fc.position(0);
+        for (int i = 0; i<SectorQ;i++)
         {
-            out.write(data.getBytes("UTF-8"), i*SectorL, SectorL);
+            fc.write(deleter);
         }
     }
     
     public void errase(int sectorNum) throws IOException
     {
-        String data = "";
-        for (int j = 0; j<SectorL;j++)
-        {
-            data = data.concat(" ");
-        }
-        
-        out.write(data.getBytes("UTF-8"), sectorNum*SectorL, SectorL);
+        fc.position(sectorNum*SectorL);
+        fc.write(deleter);
     }
 }
