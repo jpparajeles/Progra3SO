@@ -10,14 +10,23 @@ package progra3so.FileSytem;
  * @author José Pablo
  */
 public abstract class Node {
-    private String name;
-    private final Properties properties;
-
-    public Node(String name) {
+    protected String name;
+    protected final Properties properties;
+    protected Folder parent;
+    
+    public Node(String name, Folder parent) {
         this.name = name;
         this.properties = new Properties();
+        this.parent = parent;
     }
-       
+    
+    public Folder getParent() {
+        return parent;
+    }
+
+    public void setParent(Folder parent) {
+        this.parent = parent;
+    }       
 
     public Properties getProperties() {
         return properties;
@@ -31,5 +40,10 @@ public abstract class Node {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public abstract String FullName();
+
+    
+    
     
 }

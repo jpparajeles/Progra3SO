@@ -5,15 +5,21 @@
  */
 package progra3so.FileSytem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author José Pablo
  */
 public class File extends Node {
-    public String extention;
+    private String extention;
+    private final List<Integer> sectorList;
 
-    public File(String name) {
-        super(name);
+    public File(String name, String Ext, Folder parent) {
+        super(name, parent);
+        sectorList = new ArrayList<>();
+        extention = Ext;
     }
 
     public String getExtention() {
@@ -23,4 +29,16 @@ public class File extends Node {
     public void setExtention(String extention) {
         this.extention = extention;
     }
+
+    public List<Integer> getSectorList() {
+        return sectorList;
+    }
+
+    @Override
+    public String FullName() {
+        return name+extention;
+    }
+    
+    
+    
 }

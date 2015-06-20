@@ -13,15 +13,20 @@ import java.util.List;
  * @author José Pablo
  */
 public class Folder extends Node {
-    private List<Node> children;
+    protected final List<Node> children;
 
-    public Folder(String name) {
-        super(name);
-        children = new ArrayList<Node>();
+    public Folder(String name, Folder parent) {
+        super(name, parent);
+        children = new ArrayList<>();
     }
 
     public List<Node> getChildren() {
         return children;
+    }
+
+    @Override
+    public String FullName() {
+        return name;
     }
 
     

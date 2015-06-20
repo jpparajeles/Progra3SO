@@ -10,9 +10,22 @@ package progra3so.FileSytem;
  * @author José Pablo
  */
 public class Root extends Folder {
-
-    public Root() {
-        super("Root");
+    
+    private static boolean isinstance = false;
+    private static Root instance;
+    
+    private Root() {
+        super("Root",null);
+    }
+    
+    public static Root getRoot()
+    {
+        if(!isinstance)
+        {
+            instance = new Root();
+            isinstance = true;
+        }
+        return instance;
     }
     
     
