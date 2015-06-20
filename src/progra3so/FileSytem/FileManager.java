@@ -107,7 +107,7 @@ public class FileManager {
                 break;
             }
         }
-        return 
+        return start;
     }
     
     public void Create(String url, int SegL, int SegQ) throws IOException
@@ -146,6 +146,102 @@ public class FileManager {
         properties.setDiskSize(0);
         CurrentNode = folder;
         UpdateParent(properties);
+        
+    }
+    
+    public void CambiarDir(String url) throws Exception
+    {
+        Node PathParser = PathParser(url);
+        if (!(PathParser instanceof Folder))
+        {
+            throw new Exception("No es un Directorio");
+        }
+        CurrentFolder = (Folder) PathParser;
+        CurrentNode = null;
+    }
+    
+    public void SelectFile(String url) throws Exception
+    {
+        CurrentNode = PathParser(url);
+    }
+    public List<Node> ListarDir()
+    {
+        return CurrentFolder.getChildren();
+    }
+    public void ModFile(String Content) throws Exception
+    {
+        
+        File actual = (File)CurrentNode;
+        diskManager.DeleteFile(actual.getSectorList());
+        List<Integer> WriteFile = diskManager.WriteFile(Content);
+        actual.getSectorList().addAll(WriteFile);
+        Properties properties = actual.getProperties();
+        // Set properties
+        properties.setSize(Content.length());
+        properties.setDiskSize(WriteFile.size());
+        properties.setLastModifiedDate(new Date());
+        
+        UpdateParent(properties);
+    }
+    public Properties VerPropiedades()
+    {
+        return CurrentNode.getProperties();
+    }
+    public String ContFile() throws Exception
+    {
+        if (!(CurrentNode instanceof File))
+        {
+            throw new Exception("No es un archivo");
+        }
+        return diskManager.ReadFile(((File)CurrentNode).getSectorList());
+    }
+    private Node getChild(Folder parent, String name) throws Exception
+    {
+        for (Node child : parent.getChildren())
+        {
+            if (child.FullName().equals(name))
+            {
+                return child;
+            }
+        }
+        throw new Exception("No encontrado");
+    }
+    private int indexChild(Folder parent, String name) throws Exception
+    {
+        for (int i = 0; i<parent.getChildren().size(); i++)
+        {        
+            if (parent.getChildren().get(i).FullName().equals(name))
+            {
+                return i;
+            }
+        }
+        throw new Exception("No encontrado");
+    }
+    private void ReMove(Node node) throws Exception
+    {
+        if(node instanceof File)
+        {
+            Properties AntiFile = Properties.AntiFile(node.getProperties());
+            Folder parent = node.getParent();
+            parent.getChildren().remove(indexChild(parent, node.FullName()));
+            UpdateParent(parent,AntiFile);
+            diskManager.DeleteFile(((File)node).getSectorList());
+        }
+        else
+        {
+            for(Node child : ((Folder)node).getChildren())
+            {
+                ReMove(child);
+            }
+        }
+    }
+    public void ReMove() throws Exception
+    {
+        if (CurrentNode instanceof Root)
+        {
+            throw new Exception("Imposible borrar la Raíz del disco");
+        }
+        ReMove(CurrentNode);
         
     }
             

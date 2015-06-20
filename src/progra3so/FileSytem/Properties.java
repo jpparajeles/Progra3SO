@@ -21,6 +21,14 @@ public class Properties {
         CreationDate = new Date();
     }  
     
+    public static Properties AntiFile(Properties p)
+    {
+        Properties anti = new Properties();
+        anti.setSize(p.Size*-1);
+        anti.setSize(p.DiskSize*-1);
+        return anti;
+    }
+    
     public Date getCreationDate() {
         return CreationDate;
     }
