@@ -27,6 +27,11 @@ public class Root extends Folder {
         }
         return instance;
     }
+    @Override
+    public String Path()
+    {
+        return "/";
+    }
     
     
     

@@ -41,6 +41,11 @@ public abstract class Node {
         this.name = name;
     }
     
+    public String Path()
+    {
+        return parent.Path()+FullName();
+    }
+    
     public abstract String FullName();
 
     

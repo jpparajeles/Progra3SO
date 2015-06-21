@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -118,8 +120,12 @@ public class FileManager {
     {
         diskManager.Create(url, SegL, SegQ);
     }
-    public void File(String FileName, String FileExt, String Content) throws IOException
+    public void File(String FileName, String FileExt, String Content) throws IOException, Exception
     {
+        if(diskManager.FreeSpace()<Content.length())
+        {
+            throw new Exception("No hay Suficiente espacio libre");
+        }
         // file logico
         File file = new File(FileName,FileExt, CurrentFolder);
         // añdor al padre
@@ -176,6 +182,10 @@ public class FileManager {
     {
         
         File actual = (File)CurrentNode;
+        if(diskManager.FreeSpace()+actual.properties.getDiskSize()<Content.length())
+        {
+            throw new Exception("No hay suficiente espacio en el disco");
+        }
         diskManager.DeleteFile(actual.getSectorList());
         List<Integer> WriteFile = diskManager.WriteFile(Content);
         actual.getSectorList().addAll(WriteFile);
@@ -248,6 +258,42 @@ public class FileManager {
         ReMove(CurrentNode);
         
     }
+    public int QSpaceFree()
+    {
+        return diskManager.FreeSpace();
+    }
+    
+    private List<File> Find(Folder folder, Pattern p)
+    {
+        List<File> ret = new ArrayList<>();
+        for(Node child : folder.getChildren())
+        {
+            if(child instanceof Folder)
+            {
+                ret.addAll(Find((Folder)child, p));
+            }
+            else
+            {
+                Matcher m = p.matcher(child.Path());
+                if(m.matches())
+                {
+                    ret.add((File)child);
+                }
+            }
+        }
+        return ret;
+    }
+    
+    public List<File> Find(String finder)
+    {
+        finder = finder.replace(".", "\\.");
+        finder = finder.replace("\\", "\\\\");
+        finder = finder.replace("*", "\\w*");
+        
+        Pattern p = Pattern.compile(finder,Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE);
+        return Find(root,p);
+    }
+    
             
     
     

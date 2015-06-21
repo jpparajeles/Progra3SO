@@ -29,5 +29,11 @@ public class Folder extends Node {
         return name;
     }
 
+    @Override
+    public String Path() {
+        return super.Path()+"/";
+    }
+    
+
     
 }

@@ -49,9 +49,8 @@ public class DiskManager {
     public String ReadFile(List<Integer> sectors) throws IOException
     {
         String ret = "";
-        for(int i = 0; i<sectors.size();i++)
-        {
-            ret = ret.concat(disk.readSector(sectors.get(i)));
+        for (Integer sector : sectors) {
+            ret = ret.concat(disk.readSector(sector));
         }
         return ret;
     }
@@ -63,4 +62,9 @@ public class DiskManager {
             freesectors.push(sectors.get(i));
         }
     }
+    public int FreeSpace()
+    {
+        return freesectors.size()*disk.getSectorL();
+    }
+    
 }
