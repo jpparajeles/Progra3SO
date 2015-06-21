@@ -5,11 +5,13 @@
  */
 package progra3so;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import progra3so.FileSytem.DiskManager;
 import progra3so.FileSytem.FileManager;
+import progra3so.FileSytem.Node;
 
 /**
  *
@@ -20,32 +22,52 @@ public class Progra3SO {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // TODO code application logic here
         String[] split = "/".split("/");
         
-        String url = "C:\\Users\\José Pablo\\Desktop\\test\\disco.txt";
+        String url = "C:\\Users\\Fabian\\Desktop\\disco.txt";
         
-        System.out.println("Hola");
-        
+        DiskManager diskManager = new DiskManager();
+        FileManager FM = new FileManager();
         try {
-            FileManager FM = new FileManager();
             FM.Create(url, 32, 10);
-            FM.MkDir("Documentos");
-            FM.MkDir("Musica");
-            FM.MkDir("Imagenes");
-            FM.MkDir("Videos");
-                FM.CambiarDir("Documentos");
-                    FM.MkDir("FolderDocumentos");
-                    FM.File("info1", ".txt", "Fabian Lopez Quesada");
-                    FM.File("info2", ".txt", "Jose Pablo Parajeles");
-                    FM.File("info3", ".txt", "Rudiney Mejias Calvo");
-                    FM.File("info4", ".txt", "Kenneth Meza Chaves");
-                        FM.CambiarDir("./FolderDocumentos");
-                        FM.File("info5", ".txt", "Maria Fernanda Chaves");
-                    FM.CambiarDir(".");
+            //diskManager.WriteFile("Hola");
+            //List<Integer> WriteFile = diskManager.WriteFile("Esta es una prueba de mas de 32 bits de largo");
+            //diskManager.WriteFile("Adieu");
+            //diskManager.DeleteFile(WriteFile);
+            //diskManager.WriteFile("En un hermoso dia de verano los pajaros cantan, rien y sonrien a la luz de sol");
+            FM.MkDir("Carpeta1");
+            //FM.CambiarDir("Carpeta1");
+            FM.MkDir("Carpeta2");
+            FM.MkDir("Carpeta3");
+            FM.MkDir("Carpeta4");
+            //FM.CambiarDir("../");
+            //FM.CambiarDir("Carpeta1");
+            FM.File("info", ".txt", "Fabian Lopez Quesada");
+            FM.File("info1", ".txt", "The one that...");
             
-        } catch (Exception ex) {
+            System.out.println("EL FOLDER ACTUAL ES: ");
+            //FM.MkDir("ArchivoCreado1");
+            System.out.println(FM.getCurrentFolder().FullName().toString());
+            FM.SelectFile("info.txt");
+            System.out.println("PROPIEDADES DE ARCHIVO");
+            System.out.println(FM.ContFile());
+            
+            FM.SelectFile("info1.txt");
+            System.out.println("PROPIEDADES DE ARCHIVO");
+            System.out.println(FM.ContFile());
+            
+//System.out.println(FM.VerPropiedades().getCreationDate());
+            
+            List<Node> ListaFolders = new ArrayList<Node>();
+            ListaFolders = FM.ListarDir();
+            for (int i = 0; i < ListaFolders.size(); i++) {
+                System.out.println(ListaFolders.get(i).FullName());
+            }
+            
+            
+        } catch (IOException ex) {
             Logger.getLogger(Progra3SO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
