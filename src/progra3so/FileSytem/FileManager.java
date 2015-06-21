@@ -74,8 +74,11 @@ public class FileManager {
             case "..":
                 start = CurrentFolder.getParent();
                 break;
-            default:
+            case "":
                 start = root;
+                break;
+            default:
+                start = CurrentFolder;
                 i = 0;
                 break;
         }
@@ -120,11 +123,33 @@ public class FileManager {
     {
         diskManager.Create(url, SegL, SegQ);
     }
-    public void File(String FileName, String FileExt, String Content) throws IOException, Exception
+    public void File(String FileName, String FileExt, String Content, Boolean overwrite) throws IOException, Exception
     {
         if(diskManager.FreeSpace()<Content.length())
         {
             throw new Exception("No hay Suficiente espacio libre");
+        }
+        boolean error = false;
+        try
+        {
+            Node child = getChild(CurrentFolder, FileName+FileExt);
+            if(!overwrite)
+            {
+                error = true;
+            }
+            else
+            {
+                ReMove(child);
+                error = false;
+            }
+        }
+        catch (Exception e)
+        {
+            error = false;
+        }
+        if(error)
+        {
+            throw new Exception("El archivo existe y no se debe sobreescribir");
         }
         // file logico
         File file = new File(FileName,FileExt, CurrentFolder);
@@ -143,8 +168,30 @@ public class FileManager {
         UpdateParent(properties);        
     }
 
-    public void MkDir(String Name)
+    public void MkDir(String Name, boolean overwrite) throws Exception
     {
+        boolean error = false;
+        try
+        {
+            Node child = getChild(CurrentFolder, Name);
+            if(!overwrite)
+            {
+                error = true;
+            }
+            else
+            {
+                ReMove(child);
+                error = false;
+            }
+        }
+        catch (Exception e)
+        {
+            error = false;
+        }
+        if(error)
+        {
+            throw new Exception("El Folder existe y no se debe sobreescribir");
+        }
         // folder logico
         Folder folder = new Folder(Name, CurrentFolder);
         // añadir al padre
@@ -295,6 +342,134 @@ public class FileManager {
         Pattern p = Pattern.compile(finder,Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE);
         return Find(root,p);
     }
+    
+    
+    public void Rename(File file, String name)
+    {
+        String[] split = name.split(".");
+        file.setName(split[0]);
+        file.setExtention(split[1]);
+    }
+    
+    public void Rename(Folder folder, String name)
+    {
+        folder.setName(name);
+    }
+    
+    public void Move(String target, boolean overwrite) throws Exception
+    {
+        
+        int endIndex = target.lastIndexOf("/");
+        if (endIndex != -1)  
+        {
+            String parentT = target.substring(0, endIndex);
+            Node destino = null;
+            try {
+                destino = PathParser(parentT);
+            } catch (Exception exception) {
+                throw new Exception("El path es invalido", exception);
+            }
+            if (!(destino instanceof Folder))
+            {
+                throw new Exception("El destino no se encuentra dentro de un Folder");
+            }
+            String last = target.substring(endIndex+1);
+            
+            boolean error = false;
+            String msj = "";
+            try {
+                Node child = getChild((Folder) destino, last);
+                if (child instanceof File)
+                {
+                    if(CurrentNode instanceof Folder)
+                    {
+                        error = true;
+                        msj = "Imposible mover Folder en archivo";
+                    }
+                    else
+                    {
+                        if(!overwrite)
+                        {
+                            error = true;
+                        }
+                        else
+                        {
+                            ReMove(child);
+                            error = false;
+                        }
+                    }
+                }
+                else
+                {
+                    try {
+                        destino = child;
+                        child = getChild((Folder) destino, last);
+                        if(!overwrite)
+                        {
+                            error = true;
+                        }
+                        else
+                        {
+                            ReMove(child);
+                            error = false;
+                        }
+                    } catch (Exception exception) {
+                        if (CurrentNode instanceof File)
+                        {
+                            Rename((File) CurrentNode, last);
+                        }
+                        else
+                        {
+                            Rename((File) CurrentNode, last);
+                        }
+                        CurrentFolder = (Folder)destino;
+                    }
+                }
+                
+            } catch (Exception exception) {
+                if (CurrentNode instanceof File)
+                {
+                    Rename((File) CurrentNode, last);
+                }
+                else
+                {
+                    Rename((File) CurrentNode, last);
+                }
+            }
+            if(error)
+            {
+                throw new Exception(msj);
+            }
+            
+            Folder  newPadre = ((Folder)destino);
+            newPadre.children.add(CurrentNode);
+            UpdateParent(newPadre, CurrentNode.getProperties());
+            CurrentFolder = newPadre;
+            
+            Folder padre = CurrentNode.getParent();
+            int indexhijo = indexChild(padre, CurrentNode.FullName());
+            padre.getChildren().remove(indexhijo);
+            Properties AntiFile = Properties.AntiFile(CurrentNode.getProperties());
+            UpdateParent(padre,AntiFile);
+            
+        }
+        else
+        {
+            if (CurrentNode instanceof File)
+            {
+                Rename((File) CurrentNode, target);
+            }
+            else
+            {
+                Rename((Folder)CurrentNode, target);
+            }
+            Properties properties = new Properties();
+            properties.setDiskSize(0);
+            properties.setSize(0);                 
+            UpdateParent(properties);
+        }
+    }
+    
     
             
     
