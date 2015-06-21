@@ -51,7 +51,7 @@ public class DiskManager {
         String ret = "";
         for(int i = 0; i<sectors.size();i++)
         {
-            ret = ret.concat(disk.readSector(i));
+            ret = ret.concat(disk.readSector(sectors.get(i)));
         }
         return ret;
     }

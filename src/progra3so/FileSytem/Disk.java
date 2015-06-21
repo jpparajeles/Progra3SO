@@ -31,6 +31,12 @@ public class Disk {
         this.SectorQ = SectorQ;
         this.SectorL = SectorL;
         Path file = Paths.get(url);
+        java.io.File f = new java.io.File(url);
+        if(!f.exists())
+        {
+            f.createNewFile();
+        }
+        
         this.fc = FileChannel.open(file, READ, WRITE);
         
         String data = "";
