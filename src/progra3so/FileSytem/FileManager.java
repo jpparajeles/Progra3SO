@@ -56,6 +56,10 @@ public class FileManager {
     private Node PathParser(String url) throws Exception
     {
         String[] split = url.split("/");
+        if(split.length==0)
+        {
+            return root;
+        }
         ArrayList<String> splitlist = new ArrayList<>();
         Collections.addAll(splitlist,split);
         Node start;
