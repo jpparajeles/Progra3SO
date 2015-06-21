@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import progra3so.FileSytem.DiskManager;
+import progra3so.FileSytem.FileManager;
 
 /**
  *
@@ -26,16 +27,25 @@ public class Progra3SO {
         String url = "C:\\Users\\José Pablo\\Desktop\\test\\disco.txt";
         
         System.out.println("Hola");
-        DiskManager diskManager = new DiskManager();
+        
         try {
-            diskManager.Create(url, 32, 10);
-            diskManager.WriteFile("Hola");
-            List<Integer> WriteFile = diskManager.WriteFile("Esta es una prueba de mas de 32 bits de largo");
-            diskManager.WriteFile("Adieu");
-            diskManager.DeleteFile(WriteFile);
-            diskManager.WriteFile("En un hermoso dia de verano los pajaros cantan, rien y sonrien a la luz de sol");
+            FileManager FM = new FileManager();
+            FM.Create(url, 32, 10);
+            FM.MkDir("Documentos");
+            FM.MkDir("Musica");
+            FM.MkDir("Imagenes");
+            FM.MkDir("Videos");
+                FM.CambiarDir("Documentos");
+                    FM.MkDir("FolderDocumentos");
+                    FM.File("info1", ".txt", "Fabian Lopez Quesada");
+                    FM.File("info2", ".txt", "Jose Pablo Parajeles");
+                    FM.File("info3", ".txt", "Rudiney Mejias Calvo");
+                    FM.File("info4", ".txt", "Kenneth Meza Chaves");
+                        FM.CambiarDir("./FolderDocumentos");
+                        FM.File("info5", ".txt", "Maria Fernanda Chaves");
+                    FM.CambiarDir(".");
             
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Progra3SO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

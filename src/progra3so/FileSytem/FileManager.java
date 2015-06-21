@@ -79,7 +79,7 @@ public class FileManager {
         }
         for (; i<splitlist.size(); i++)
         {
-            switch (startS) {
+            switch (splitlist.get(i)) {
             case ".":
                 break;
             case "..":
