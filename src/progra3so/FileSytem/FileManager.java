@@ -188,6 +188,7 @@ public class FileManager {
         }
         diskManager.DeleteFile(actual.getSectorList());
         List<Integer> WriteFile = diskManager.WriteFile(Content);
+        actual.getSectorList().clear();
         actual.getSectorList().addAll(WriteFile);
         Properties properties = actual.getProperties();
         // Set properties
@@ -207,7 +208,8 @@ public class FileManager {
         {
             throw new Exception("No es un archivo");
         }
-        return diskManager.ReadFile(((File)CurrentNode).getSectorList());
+        File file = (File)CurrentNode;
+        return diskManager.ReadFile(file.getSectorList()).substring(0, file.getProperties().getSize());
     }
     private Node getChild(Folder parent, String name) throws Exception
     {
