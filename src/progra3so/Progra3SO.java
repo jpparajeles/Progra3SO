@@ -21,6 +21,7 @@ public class Progra3SO {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        String[] split = "/".split("/");
         
         String url = "C:\\Users\\José Pablo\\Desktop\\test\\disco.txt";
         
