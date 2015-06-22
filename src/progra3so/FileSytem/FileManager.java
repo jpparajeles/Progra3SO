@@ -471,6 +471,11 @@ public class FileManager {
             UpdateParent(properties);
         }
     }
+
+    public Root getRoot() {
+        return root;
+    }
+    
     
     
             
