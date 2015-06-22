@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -482,7 +483,7 @@ public class FileManager {
     
     private void Export(Folder folder, String p) throws IOException
     {
-        String local_url = p+"/"+folder.getName();
+        String local_url = p+"/"+folder.getName();   
         java.io.File dir = new java.io.File(local_url);
         dir.mkdir();
         for (Node child : folder.getChildren())
@@ -508,16 +509,17 @@ public class FileManager {
         }
         else
         {
-            Export((Folder)CurrentNode, URL);
+            //Export((Folder)CurrentNode, URL);
+            throw new Exception("So se soporta la Exportación de Directorios");
         }
     }
     
     
     private void Import(java.io.File dir1) throws Exception
     {
-        Node tempN = CurrentNode;
-        Folder tempF = CurrentFolder;
+        
         if(dir1.isDirectory()) {
+            /*
             String name = dir1.getName();
             MkDir(name, true);
             CambiarDir(name);
@@ -525,6 +527,8 @@ public class FileManager {
             for (java.io.File content1 : content) {
                 Import(content1);
             }
+                    */
+            throw new Exception("So se soporta la Importación de Directorios");
         }
         else
         {
@@ -537,10 +541,10 @@ public class FileManager {
                 read = in.read(buffer);
             } while (read >= 0);
             String[] split = dir1.getName().split("\\.");
-            File(split[0], split[1], contents.toString(), Boolean.TRUE);
+            String fileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
+            File(split[0]+fileName, split[1], contents.toString(), Boolean.TRUE);
         }
-        CurrentFolder = tempF;
-        CurrentNode = tempN;
+        
     }
     
     public void Import(String URL, String target) throws FileNotFoundException, IOException, Exception
@@ -548,14 +552,26 @@ public class FileManager {
         
         Node tempN = CurrentNode;
         Folder tempF = CurrentFolder;
-                
         java.io.File dir1 = new java.io.File(URL);
-        
+        Import(dir1);
+        Move(target, true);
         CurrentFolder = tempF;
         CurrentNode = tempN;
-        Move(target, true);
-    
-    }    
+    } 
+    public void Copy(String target) throws Exception
+    {
+        if(CurrentNode instanceof File)
+        {
+            String fileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
+            File tempF = (File) CurrentNode;
+            File(tempF.getName()+fileName,tempF.getExtention(),ContFile(),true);
+            Move(target, true);
+        }
+        else
+        {
+            throw new Exception("No se soporta la copia de directorios");
+        }
+    }
             
     
     
