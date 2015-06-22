@@ -5,15 +5,11 @@
  */
 package progra3so.FileSytem;
 
-import com.sun.org.apache.xpath.internal.axes.SelfIteratorNoPredicate;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -349,7 +345,7 @@ public class FileManager {
         finder = finder.replace("\\", "\\\\");
         finder = finder.replace(".", "\\.");
         finder = finder.replace("*", "\\w*");
-        finder = ".*"+finder;
+        finder = ".*"+finder+".*";
         
         Pattern p = Pattern.compile(finder,Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE|Pattern.UNICODE_CHARACTER_CLASS);
         return Find(root,p);
