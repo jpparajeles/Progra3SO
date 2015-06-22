@@ -66,5 +66,14 @@ public class DiskManager {
     {
         return freesectors.size()*disk.getSectorL();
     }
+    public List<String> Disk() throws IOException
+    {
+        List<String> ret = new ArrayList<>();
+        for (int i = 0; i<disk.getSectorQ();i++)
+        {
+            ret.add(disk.readSector(i));
+        }
+        return ret;
+    }
     
 }

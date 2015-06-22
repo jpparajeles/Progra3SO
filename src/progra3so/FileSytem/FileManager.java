@@ -466,6 +466,11 @@ public class FileManager {
         return root;
     }
     
+    public List<String> Disk() throws IOException
+    {
+        return diskManager.Disk();
+    }
+    
     
     
             
