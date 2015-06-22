@@ -5,7 +5,15 @@
  */
 package progra3so.FileSytem;
 
+import com.sun.org.apache.xpath.internal.axes.SelfIteratorNoPredicate;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -337,11 +345,12 @@ public class FileManager {
     
     public List<File> Find(String finder)
     {
-        finder = finder.replace(".", "\\.");
         finder = finder.replace("\\", "\\\\");
+        finder = finder.replace(".", "\\.");
         finder = finder.replace("*", "\\w*");
+        finder = ".*"+finder;
         
-        Pattern p = Pattern.compile(finder,Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE);
+        Pattern p = Pattern.compile(finder,Pattern.CASE_INSENSITIVE|Pattern.UNICODE_CASE|Pattern.UNICODE_CHARACTER_CLASS);
         return Find(root,p);
     }
     
@@ -471,8 +480,82 @@ public class FileManager {
         return diskManager.Disk();
     }
     
+    private void Export(Folder folder, String p) throws IOException
+    {
+        String local_url = p+"/"+folder.getName();
+        java.io.File dir = new java.io.File(local_url);
+        dir.mkdir();
+        for (Node child : folder.getChildren())
+        {
+            if(CurrentNode instanceof File)
+            {
+                BufferedWriter out = new BufferedWriter(new FileWriter(local_url+"/"+child.FullName()));
+            }
+            else
+            {
+                Export((Folder) child,local_url);
+            }
+        }
+    }
     
     
+    public void Export(String URL) throws IOException, Exception
+    {
+        if(CurrentNode instanceof File)
+        {
+            BufferedWriter out = new BufferedWriter(new FileWriter(URL));
+            out.write(ContFile());        
+        }
+        else
+        {
+            Export((Folder)CurrentNode, URL);
+        }
+    }
+    
+    
+    private void Import(java.io.File dir1) throws Exception
+    {
+        Node tempN = CurrentNode;
+        Folder tempF = CurrentFolder;
+        if(dir1.isDirectory()) {
+            String name = dir1.getName();
+            MkDir(name, true);
+            CambiarDir(name);
+            java.io.File[] content = dir1.listFiles();
+            for (java.io.File content1 : content) {
+                Import(content1);
+            }
+        }
+        else
+        {
+            FileReader in = new FileReader(dir1);
+            StringBuilder contents = new StringBuilder();
+            char[] buffer = new char[4096];
+            int read = 0;
+            do {
+                contents.append(buffer, 0, read);
+                read = in.read(buffer);
+            } while (read >= 0);
+            String[] split = dir1.getName().split("\\.");
+            File(split[0], split[1], contents.toString(), Boolean.TRUE);
+        }
+        CurrentFolder = tempF;
+        CurrentNode = tempN;
+    }
+    
+    public void Import(String URL, String target) throws FileNotFoundException, IOException, Exception
+    {
+        
+        Node tempN = CurrentNode;
+        Folder tempF = CurrentFolder;
+                
+        java.io.File dir1 = new java.io.File(URL);
+        
+        CurrentFolder = tempF;
+        CurrentNode = tempN;
+        Move(target, true);
+    
+    }    
             
     
     
