@@ -21,7 +21,7 @@ public class Disk {
     private final int SectorQ;
     private final int SectorL;
     FileChannel fc;
-    ByteBuffer deleter;
+    String data;
     
     
 
@@ -39,14 +39,12 @@ public class Disk {
         
         this.fc = FileChannel.open(file, READ, WRITE);
         
-        String data = "";
+        data = "";
         for (int j = 0; j<SectorL;j++)
         {
             data = data.concat(" ");
         }
-        byte[] bytes = data.getBytes("UTF-8");
-        this.deleter = ByteBuffer.wrap(bytes);
-                
+                       
         format();
     }
 
@@ -92,6 +90,8 @@ public class Disk {
         fc.position(0);
         for (int i = 0; i<SectorQ;i++)
         {
+            byte[] bytes = data.getBytes("UTF-8");
+            ByteBuffer deleter = ByteBuffer.wrap(bytes);
             fc.write(deleter);
         }
     }
@@ -99,6 +99,8 @@ public class Disk {
     public void errase(int sectorNum) throws IOException
     {
         fc.position(sectorNum*SectorL);
+        byte[] bytes = data.getBytes("UTF-8");
+        ByteBuffer deleter = ByteBuffer.wrap(bytes);
         fc.write(deleter);
     }
 }

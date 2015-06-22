@@ -348,7 +348,7 @@ public class FileManager {
     
     public void Rename(File file, String name)
     {
-        String[] split = name.split(".");
+        String[] split = name.split("\\.");
         file.setName(split[0]);
         file.setExtention(split[1]);
     }
@@ -362,10 +362,12 @@ public class FileManager {
     {
         
         int endIndex = target.lastIndexOf("/");
+        Node destino = null;
+        String last;
         if (endIndex != -1)  
         {
             String parentT = target.substring(0, endIndex);
-            Node destino = null;
+            
             try {
                 destino = PathParser(parentT);
             } catch (Exception exception) {
@@ -375,60 +377,66 @@ public class FileManager {
             {
                 throw new Exception("El destino no se encuentra dentro de un Folder");
             }
-            String last = target.substring(endIndex+1);
-            
-            boolean error = false;
-            String msj = "";
-            try {
-                Node child = getChild((Folder) destino, last);
-                if (child instanceof File)
+            last = target.substring(endIndex+1);
+        }
+        else
+        {
+            destino = root;
+            last = target;
+        }
+        boolean error = false;
+        String msj = "";
+        try {
+            Node child = getChild((Folder) destino, last);
+            if (child instanceof File)
+            {
+                if(CurrentNode instanceof Folder)
                 {
-                    if(CurrentNode instanceof Folder)
-                    {
-                        error = true;
-                        msj = "Imposible mover Folder en archivo";
-                    }
-                    else
-                    {
-                        if(!overwrite)
-                        {
-                            error = true;
-                        }
-                        else
-                        {
-                            ReMove(child);
-                            error = false;
-                        }
-                    }
+                    error = true;
+                    msj = "Imposible mover Folder en archivo";
                 }
                 else
                 {
-                    try {
-                        destino = child;
-                        child = getChild((Folder) destino, last);
-                        if(!overwrite)
-                        {
-                            error = true;
-                        }
-                        else
-                        {
-                            ReMove(child);
-                            error = false;
-                        }
-                    } catch (Exception exception) {
-                        if (CurrentNode instanceof File)
-                        {
-                            Rename((File) CurrentNode, last);
-                        }
-                        else
-                        {
-                            Rename((File) CurrentNode, last);
-                        }
-                        CurrentFolder = (Folder)destino;
+                    if(!overwrite)
+                    {
+                        error = true;
+                    }
+                    else
+                    {
+                        ReMove(child);
+                        error = false;
                     }
                 }
-                
-            } catch (Exception exception) {
+            }
+            else
+            {
+                try {
+                    destino = child;
+                    child = getChild((Folder) destino, last);
+                    if(!overwrite)
+                    {
+                        error = true;
+                    }
+                    else
+                    {
+                        ReMove(child);
+                        error = false;
+                    }
+                } catch (Exception exception) {
+                    error = false;                    
+                }
+            }
+
+        } catch (Exception exception) {
+            error = false;
+        }
+        if(error)
+        {
+            throw new Exception(msj);
+        }
+        
+        if (!last.equals(CurrentNode.FullName()))
+            {
                 if (CurrentNode instanceof File)
                 {
                     Rename((File) CurrentNode, last);
@@ -438,38 +446,20 @@ public class FileManager {
                     Rename((File) CurrentNode, last);
                 }
             }
-            if(error)
-            {
-                throw new Exception(msj);
-            }
             
-            Folder  newPadre = ((Folder)destino);
-            newPadre.children.add(CurrentNode);
-            UpdateParent(newPadre, CurrentNode.getProperties());
-            CurrentFolder = newPadre;
+        Folder  newPadre = ((Folder)destino);
+        newPadre.children.add(CurrentNode);
+        UpdateParent(newPadre, CurrentNode.getProperties());
+        CurrentFolder = newPadre;
+
+        Folder padre = CurrentNode.getParent();
+        int indexhijo = indexChild(padre, CurrentNode.FullName());
+        padre.getChildren().remove(indexhijo);
+        Properties AntiFile = Properties.AntiFile(CurrentNode.getProperties());
+        UpdateParent(padre,AntiFile);
+        CurrentNode.setParent(newPadre);
             
-            Folder padre = CurrentNode.getParent();
-            int indexhijo = indexChild(padre, CurrentNode.FullName());
-            padre.getChildren().remove(indexhijo);
-            Properties AntiFile = Properties.AntiFile(CurrentNode.getProperties());
-            UpdateParent(padre,AntiFile);
-            
-        }
-        else
-        {
-            if (CurrentNode instanceof File)
-            {
-                Rename((File) CurrentNode, target);
-            }
-            else
-            {
-                Rename((Folder)CurrentNode, target);
-            }
-            Properties properties = new Properties();
-            properties.setDiskSize(0);
-            properties.setSize(0);                 
-            UpdateParent(properties);
-        }
+        
     }
 
     public Root getRoot() {
