@@ -296,6 +296,8 @@ public class FileManager {
             {
                 ReMove(child);
             }
+            Folder parent = node.getParent();
+            parent.getChildren().remove(indexChild(parent, node.FullName()));
         }
     }
     public void ReMove() throws Exception
