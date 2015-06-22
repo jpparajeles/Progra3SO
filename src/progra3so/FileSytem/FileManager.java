@@ -505,8 +505,8 @@ public class FileManager {
         }
         else
         {
-            //Export((Folder)CurrentNode, URL);
-            throw new Exception("So se soporta la Exportación de Directorios");
+            Export((Folder)CurrentNode, URL);
+            //throw new Exception("So se soporta la Exportación de Directorios");
         }
     }
     
@@ -515,16 +515,18 @@ public class FileManager {
     {
         
         if(dir1.isDirectory()) {
-            /*
+            
             String name = dir1.getName();
             MkDir(name, true);
             CambiarDir(name);
             java.io.File[] content = dir1.listFiles();
             for (java.io.File content1 : content) {
                 Import(content1);
+                
             }
-                    */
-            throw new Exception("So se soporta la Importación de Directorios");
+            CambiarDir("..");
+                    
+            //throw new Exception("So se soporta la Importación de Directorios");
         }
         else
         {
@@ -539,6 +541,7 @@ public class FileManager {
             String[] split = dir1.getName().split("\\.");
             String fileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
             File(split[0]+fileName, split[1], contents.toString(), Boolean.TRUE);
+            
         }
         
     }
@@ -565,7 +568,41 @@ public class FileManager {
         }
         else
         {
-            throw new Exception("No se soporta la copia de directorios");
+            String fileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
+            Folder temp = (Folder) CurrentNode;
+            String tempname = temp.name+fileName;
+            MkDir(tempname, true);
+            Move(target, true);
+            Copy(target+"/"+temp.getName(),temp);
+            
+        }
+    }
+    private void Copy(String url, Folder folder) throws Exception
+    {
+        for(Node child : folder.getChildren() )
+        {
+            if(CurrentNode instanceof File)
+            {
+                String fileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
+                File tempF = (File) CurrentNode;
+                File(tempF.getName()+fileName,tempF.getExtention(),ContFile(),true);
+                CurrentNode = child;
+                Move(url+"/"+tempF.FullName(), true);
+                CambiarDir(url);
+            }
+            else
+            {
+                String fileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
+                Folder temp = (Folder) child;
+                String tempname = temp.name+fileName;
+                CurrentNode = child;
+                CurrentFolder = child.getParent();
+                MkDir(tempname, true);
+                Move(url, true);
+                CurrentFolder = (Folder)child;
+                Copy(url+"/"+temp.getName(),temp);
+            }
+            
         }
     }
             
