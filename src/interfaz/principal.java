@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package interfaz;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +12,14 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import progra3so.FileSytem.DiskManager;
+import progra3so.FileSytem.File;
 import progra3so.FileSytem.FileManager;
+import progra3so.FileSytem.Folder;
 import progra3so.FileSytem.Node;
+import progra3so.FileSytem.Root;
 import progra3so.Progra3SO;
 
 /**
@@ -26,7 +30,6 @@ public class principal extends javax.swing.JFrame {
     
     FileManager FM = new FileManager();
     DiskManager diskManager = new DiskManager();
-        
     /**
      * Creates new form principal
      * @throws java.lang.Exception
@@ -36,42 +39,48 @@ public class principal extends javax.swing.JFrame {
         Oculta();
         //Aqui se crea el disco
         String[] split = "/".split("/");
-        String url = "C:\\Users\\Fabian\\Desktop\\disco.txt";
+        //String url = "C:\\Users\\Fabian\\Desktop\\disco.txt";
+        String url = "";
+        int size = 32;
+        int sectors = 10;
         try {
-            FM.Create(url, 32, 10);
+            url = JOptionPane.showInputDialog("Ingrese el url de creación del disco.");
+            size = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad de espacio para cada sector del disco."));
+            sectors = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad de sectores para el disco."));
+            JOptionPane.showMessageDialog(null, "Disco alojado en: "+url+"\nTamaño de sector: "+String.valueOf(size)+" bytes."+"\nCantidad de sectores: "+String.valueOf(sectors)+"\nTamaño total del disco: "+String.valueOf(size*sectors)+" bytes.");
+            FM.Create(url, size, sectors);
             //diskManager.WriteFile("Hola");
             //List<Integer> WriteFile = diskManager.WriteFile("Esta es una prueba de mas de 32 bits de largo");
             //diskManager.WriteFile("Adieu");
             //diskManager.DeleteFile(WriteFile);
             //diskManager.WriteFile("En un hermoso dia de verano los pajaros cantan, rien y sonrien a la luz de sol");
-            
-            FM.MkDir("Documentos");
-            FM.MkDir("Musica");
-            FM.MkDir("Imagenes");
-            FM.MkDir("Videos");
+            FM.MkDir("Documentos",true);
+            FM.MkDir("Musica",true);
+            FM.MkDir("Imagenes",true);
+            FM.MkDir("Videos",true);
                 FM.CambiarDir("./Documentos");
-                    FM.MkDir("FolderDocumentos");
-                    FM.File("info1", ".txt", "Fabian Lopez Quesada");
-                    FM.File("info2", ".txt", "Jose Pablo Parajeles");
-                    FM.File("info3", ".txt", "Rudiney Mejias Calvo");
-                    FM.File("info4", ".txt", "Kenneth Meza Chaves");
+                    FM.MkDir("FolderDocumentos",true);
+                    FM.File("info1", ".txt", "Fabian Lopez Quesada",true);
+                    FM.File("info2", ".txt", "Jose Pablo Parajeles",true);
+                    FM.File("info3", ".txt", "Rudiney Mejias Calvo",true);
+                    FM.File("info4", ".txt", "Kenneth Meza Chaves",true);
                         FM.CambiarDir("./FolderDocumentos");
-                        FM.File("info5", ".txt", "Maria Fernanda Chaves");
+                        FM.File("info5", ".txt", "Maria Fernanda Chaves",true);
                     FM.CambiarDir("../");
                     FM.CambiarDir("../");
                 FM.CambiarDir("Musica");
-                    FM.MkDir("Rock");
-                    FM.MkDir("Metal");
+                    FM.MkDir("Rock",true);
+                    FM.MkDir("Metal",true);
                 FM.CambiarDir("../");
                 FM.CambiarDir("./Imagenes");
-                    FM.MkDir("Fiesta");
-                    FM.File("Foto1", ".jpg", "Descripcion de la foto");
+                    FM.MkDir("Fiesta",true);
+                    FM.File("Foto1", ".jpg", "Descripcion de la foto",true);
                     FM.CambiarDir("./Fiesta");
-                        FM.File("Foto2", ".jpg", "Descripcion de la foto");
-                        FM.File("Foto3", ".jpg", "Descripcion de la foto");
+                        FM.File("Foto2", ".jpg", "Descripcion de la foto",true);
+                        FM.File("Foto3", ".jpg", "Descripcion de la foto",true);
                     FM.CambiarDir("../");
                     FM.CambiarDir("../");
-                FM.File("FS", ".doc", "Descripcion del file system");
+                FM.File("FS", ".doc", "Descripcion del file system",true);
                 
             List<Node> ListaFolders = new ArrayList<Node>();
             DefaultListModel listModel = new DefaultListModel();
@@ -83,10 +92,10 @@ public class principal extends javax.swing.JFrame {
             }
             //Asociar el modelo de lista al JList
             jList1.setModel(listModel);
-        
-        
         } catch (IOException ex) {
-            Logger.getLogger(Progra3SO.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "No se puede completar la operación.");
+            
+            //Logger.getLogger(Progra3SO.class.getName()).log(Level.SEVERE, null, ex);
         }
         //-------------------------------------------------------------------------------------------------
     }
@@ -101,6 +110,7 @@ public class principal extends javax.swing.JFrame {
     private void initComponents() {
 
         OpcionesFS = new javax.swing.ButtonGroup();
+        buttonGroupCopy = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
@@ -126,7 +136,6 @@ public class principal extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jTextNombreDirectorio = new javax.swing.JTextField();
         jButtonNombreDirectorio = new javax.swing.JButton();
-        jLayeredPane1 = new javax.swing.JLayeredPane();
         jPanelCrearArchivo = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jTextNombreArchivo = new javax.swing.JTextField();
@@ -152,6 +161,42 @@ public class principal extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaContFile = new javax.swing.JTextArea();
         jPanelModFile = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabelFileMod = new javax.swing.JLabel();
+        jButtonModFile = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextAreaModFile = new javax.swing.JTextArea();
+        jButtonModFile2 = new javax.swing.JButton();
+        jPanelRemove = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabelFileEliminar = new javax.swing.JLabel();
+        jButtonEliminar = new javax.swing.JButton();
+        jPanelMover = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabelFileMoverOld = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jButtonMover = new javax.swing.JButton();
+        jTextFieldRutaNueva = new javax.swing.JTextField();
+        jPanelCopy = new javax.swing.JPanel();
+        jRadioButton11 = new javax.swing.JRadioButton();
+        jRadioButton12 = new javax.swing.JRadioButton();
+        jRadioButton13 = new javax.swing.JRadioButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabelDe = new javax.swing.JLabel();
+        jLabelA = new javax.swing.JLabel();
+        jTextFieldCopyDe = new javax.swing.JTextField();
+        jTextFieldCopyA = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jPanelBuscar = new javax.swing.JPanel();
+        jTextFieldBuscar = new javax.swing.JTextField();
+        jButtonBuscar = new javax.swing.JButton();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jTextAreaBuscar = new javax.swing.JTextArea();
+        jPanelTree = new javax.swing.JPanel();
+        jLabel16 = new javax.swing.JLabel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTreeFs = new javax.swing.JTree();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("File System");
@@ -190,7 +235,7 @@ public class principal extends javax.swing.JFrame {
         jPanel6.setBackground(new java.awt.Color(0, 102, 102));
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jList1.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jList1.setFont(new java.awt.Font("Tw Cen MT", 0, 14)); // NOI18N
         jList1.setForeground(new java.awt.Color(0, 102, 102));
         jList1.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -300,24 +345,44 @@ public class principal extends javax.swing.JFrame {
         jRadioButton6.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jRadioButton6.setForeground(new java.awt.Color(0, 102, 102));
         jRadioButton6.setText("Copy");
+        jRadioButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton6MouseClicked(evt);
+            }
+        });
 
         jRadioButton7.setBackground(new java.awt.Color(255, 255, 255));
         OpcionesFS.add(jRadioButton7);
         jRadioButton7.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jRadioButton7.setForeground(new java.awt.Color(0, 102, 102));
         jRadioButton7.setText("Mover");
+        jRadioButton7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton7MouseClicked(evt);
+            }
+        });
 
         jRadioButton8.setBackground(new java.awt.Color(255, 255, 255));
         OpcionesFS.add(jRadioButton8);
         jRadioButton8.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jRadioButton8.setForeground(new java.awt.Color(0, 102, 102));
         jRadioButton8.setText("Remove");
+        jRadioButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton8MouseClicked(evt);
+            }
+        });
 
         jRadioButton9.setBackground(new java.awt.Color(255, 255, 255));
         OpcionesFS.add(jRadioButton9);
         jRadioButton9.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jRadioButton9.setForeground(new java.awt.Color(0, 102, 102));
         jRadioButton9.setText("Find");
+        jRadioButton9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton9MouseClicked(evt);
+            }
+        });
         jRadioButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton9ActionPerformed(evt);
@@ -329,6 +394,11 @@ public class principal extends javax.swing.JFrame {
         jRadioButton10.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jRadioButton10.setForeground(new java.awt.Color(0, 102, 102));
         jRadioButton10.setText("Tree");
+        jRadioButton10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton10MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -391,28 +461,16 @@ public class principal extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
-        jLayeredPane1.setLayout(jLayeredPane1Layout);
-        jLayeredPane1Layout.setHorizontalGroup(
-            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jLayeredPane1Layout.setVerticalGroup(
-            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout jPanelCrearDirectorioLayout = new javax.swing.GroupLayout(jPanelCrearDirectorio);
         jPanelCrearDirectorio.setLayout(jPanelCrearDirectorioLayout);
         jPanelCrearDirectorioLayout.setHorizontalGroup(
             jPanelCrearDirectorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelCrearDirectorioLayout.createSequentialGroup()
-                .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(10, 10, 10)
                 .addGroup(jPanelCrearDirectorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelCrearDirectorioLayout.createSequentialGroup()
                         .addComponent(jLabel3)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 312, Short.MAX_VALUE))
                     .addComponent(jButtonNombreDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTextNombreDirectorio, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
@@ -420,15 +478,12 @@ public class principal extends javax.swing.JFrame {
         jPanelCrearDirectorioLayout.setVerticalGroup(
             jPanelCrearDirectorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelCrearDirectorioLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelCrearDirectorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanelCrearDirectorioLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextNombreDirectorio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonNombreDirectorio)))
+                .addGap(25, 25, 25)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(jTextNombreDirectorio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonNombreDirectorio)
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
@@ -644,22 +699,370 @@ public class principal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonContFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jPanelModFile.setBackground(new java.awt.Color(255, 255, 255));
         jPanelModFile.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        jLabel11.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel11.setText("Archivo");
+
+        jLabelFileMod.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabelFileMod.setForeground(new java.awt.Color(0, 102, 102));
+        jLabelFileMod.setText("..");
+
+        jButtonModFile.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jButtonModFile.setForeground(new java.awt.Color(0, 102, 102));
+        jButtonModFile.setText("Ver contenido");
+        jButtonModFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModFileActionPerformed(evt);
+            }
+        });
+
+        jTextAreaModFile.setColumns(20);
+        jTextAreaModFile.setRows(5);
+        jScrollPane3.setViewportView(jTextAreaModFile);
+
+        jButtonModFile2.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jButtonModFile2.setForeground(new java.awt.Color(0, 102, 102));
+        jButtonModFile2.setText("Modificar");
+        jButtonModFile2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModFile2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelModFileLayout = new javax.swing.GroupLayout(jPanelModFile);
         jPanelModFile.setLayout(jPanelModFileLayout);
         jPanelModFileLayout.setHorizontalGroup(
             jPanelModFileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanelModFileLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelModFileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonModFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanelModFileLayout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabelFileMod, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE))
+                    .addComponent(jButtonModFile2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
+                .addContainerGap())
         );
         jPanelModFileLayout.setVerticalGroup(
             jPanelModFileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGroup(jPanelModFileLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelModFileLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabelFileMod))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonModFile)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonModFile2)
+                .addContainerGap())
+        );
+
+        jPanelRemove.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelRemove.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel12.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel12.setText("Archivo");
+
+        jLabelFileEliminar.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabelFileEliminar.setForeground(new java.awt.Color(0, 102, 102));
+        jLabelFileEliminar.setText("..");
+
+        jButtonEliminar.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jButtonEliminar.setForeground(new java.awt.Color(0, 102, 102));
+        jButtonEliminar.setText("Eliminar");
+        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelRemoveLayout = new javax.swing.GroupLayout(jPanelRemove);
+        jPanelRemove.setLayout(jPanelRemoveLayout);
+        jPanelRemoveLayout.setHorizontalGroup(
+            jPanelRemoveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRemoveLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelRemoveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanelRemoveLayout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabelFileEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanelRemoveLayout.setVerticalGroup(
+            jPanelRemoveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelRemoveLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelRemoveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(jLabelFileEliminar))
+                .addGap(18, 18, 18)
+                .addComponent(jButtonEliminar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanelMover.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelMover.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel13.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel13.setText("Archivo");
+
+        jLabelFileMoverOld.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabelFileMoverOld.setForeground(new java.awt.Color(0, 102, 102));
+        jLabelFileMoverOld.setText("..");
+
+        jLabel14.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel14.setText("Mover a");
+
+        jLabel15.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabel15.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel15.setText("Ruta:");
+
+        jButtonMover.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jButtonMover.setForeground(new java.awt.Color(0, 102, 102));
+        jButtonMover.setText("Mover");
+        jButtonMover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMoverActionPerformed(evt);
+            }
+        });
+
+        jTextFieldRutaNueva.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jTextFieldRutaNueva.setForeground(new java.awt.Color(0, 102, 102));
+
+        javax.swing.GroupLayout jPanelMoverLayout = new javax.swing.GroupLayout(jPanelMover);
+        jPanelMover.setLayout(jPanelMoverLayout);
+        jPanelMoverLayout.setHorizontalGroup(
+            jPanelMoverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelMoverLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelMoverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelMoverLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabelFileMoverOld, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE))
+                    .addComponent(jButtonMover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanelMoverLayout.createSequentialGroup()
+                        .addComponent(jLabel14)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanelMoverLayout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldRutaNueva)))
+                .addContainerGap())
+        );
+        jPanelMoverLayout.setVerticalGroup(
+            jPanelMoverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelMoverLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelMoverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabelFileMoverOld))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanelMoverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(jTextFieldRutaNueva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonMover)
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+
+        jPanelCopy.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelCopy.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jRadioButton11.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupCopy.add(jRadioButton11);
+        jRadioButton11.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jRadioButton11.setForeground(new java.awt.Color(0, 102, 102));
+        jRadioButton11.setText("Real->Virtual");
+        jRadioButton11.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton11MouseClicked(evt);
+            }
+        });
+
+        jRadioButton12.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupCopy.add(jRadioButton12);
+        jRadioButton12.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jRadioButton12.setForeground(new java.awt.Color(0, 102, 102));
+        jRadioButton12.setText("Virtual->Real");
+        jRadioButton12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton12MouseClicked(evt);
+            }
+        });
+
+        jRadioButton13.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroupCopy.add(jRadioButton13);
+        jRadioButton13.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jRadioButton13.setForeground(new java.awt.Color(0, 102, 102));
+        jRadioButton13.setText("Virtual->Virtual");
+        jRadioButton13.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButton13MouseClicked(evt);
+            }
+        });
+
+        jLabelDe.setText("..");
+
+        jLabelA.setText("..");
+
+        jButton1.setFont(new java.awt.Font("Tw Cen MT", 0, 11)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(0, 102, 102));
+        jButton1.setText("Copiar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelCopyLayout = new javax.swing.GroupLayout(jPanelCopy);
+        jPanelCopy.setLayout(jPanelCopyLayout);
+        jPanelCopyLayout.setHorizontalGroup(
+            jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSeparator1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelCopyLayout.createSequentialGroup()
+                .addGroup(jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanelCopyLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanelCopyLayout.createSequentialGroup()
+                                .addComponent(jLabelA, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
+                                .addGroup(jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldCopyA, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+                                    .addComponent(jTextFieldCopyDe)))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelCopyLayout.createSequentialGroup()
+                        .addGroup(jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelCopyLayout.createSequentialGroup()
+                                .addGap(22, 22, 22)
+                                .addComponent(jRadioButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jRadioButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jRadioButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelCopyLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabelDe, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanelCopyLayout.setVerticalGroup(
+            jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelCopyLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButton11)
+                    .addComponent(jRadioButton12)
+                    .addComponent(jRadioButton13))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelDe)
+                    .addComponent(jTextFieldCopyDe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelCopyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelA)
+                    .addComponent(jTextFieldCopyA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanelBuscar.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jTextFieldBuscar.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jTextFieldBuscar.setForeground(new java.awt.Color(0, 102, 102));
+
+        jButtonBuscar.setFont(new java.awt.Font("Tw Cen MT", 0, 11)); // NOI18N
+        jButtonBuscar.setForeground(new java.awt.Color(0, 102, 102));
+        jButtonBuscar.setText("Buscar");
+        jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuscarActionPerformed(evt);
+            }
+        });
+
+        jTextAreaBuscar.setColumns(20);
+        jTextAreaBuscar.setRows(5);
+        jScrollPane6.setViewportView(jTextAreaBuscar);
+
+        javax.swing.GroupLayout jPanelBuscarLayout = new javax.swing.GroupLayout(jPanelBuscar);
+        jPanelBuscar.setLayout(jPanelBuscarLayout);
+        jPanelBuscarLayout.setHorizontalGroup(
+            jPanelBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelBuscarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane6)
+                    .addGroup(jPanelBuscarLayout.createSequentialGroup()
+                        .addComponent(jTextFieldBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonBuscar)))
+                .addContainerGap())
+        );
+        jPanelBuscarLayout.setVerticalGroup(
+            jPanelBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelBuscarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonBuscar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanelTree.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelTree.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel16.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
+        jLabel16.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel16.setText("Estructura del File System");
+
+        jScrollPane5.setViewportView(jTreeFs);
+
+        javax.swing.GroupLayout jPanelTreeLayout = new javax.swing.GroupLayout(jPanelTree);
+        jPanelTree.setLayout(jPanelTreeLayout);
+        jPanelTreeLayout.setHorizontalGroup(
+            jPanelTreeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTreeLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelTreeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelTreeLayout.createSequentialGroup()
+                        .addComponent(jLabel16)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5))
+                .addContainerGap())
+        );
+        jPanelTreeLayout.setVerticalGroup(
+            jPanelTreeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTreeLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -671,6 +1074,11 @@ public class principal extends javax.swing.JFrame {
             .addComponent(jPanelVerPropiedades, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanelContFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanelModFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelMover, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelCopy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanelTree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -684,7 +1092,17 @@ public class principal extends javax.swing.JFrame {
                 .addComponent(jPanelContFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelModFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelRemove, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelMover, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelCopy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelTree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jPanelCrearDirectorio.getAccessibleContext().setAccessibleDescription("");
@@ -721,7 +1139,7 @@ public class principal extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 1839, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -773,6 +1191,9 @@ public class principal extends javax.swing.JFrame {
         // TODO add your handling code here:
         jLabel2.setText(jList1.getSelectedValue().toString());
         jLabelFile.setText(jList1.getSelectedValue().toString());
+        jLabelFileMod.setText(jList1.getSelectedValue().toString());
+        jLabelFileEliminar.setText(jList1.getSelectedValue().toString());
+        jLabelFileMoverOld.setText(jList1.getSelectedValue().toString());
         JList list = (JList)evt.getSource();
         if (evt.getClickCount() == 2) 
         {
@@ -785,7 +1206,7 @@ public class principal extends javax.swing.JFrame {
             //Se cambia de directorio
             FM.CambiarDir("./"+jList1.getSelectedValue().toString());
             }
-            System.out.println("./"+jList1.getSelectedValue().toString());
+            //System.out.println("./"+jList1.getSelectedValue().toString());
             //Se limpia la lista
             DefaultListModel listModel = (DefaultListModel) jList1.getModel();
             listModel.removeAllElements();
@@ -803,7 +1224,8 @@ public class principal extends javax.swing.JFrame {
             jList1.setModel(listModelNuevo);
             jTextField1.setText(FM.getCurrentFolder().FullName().toString());
         } catch (Exception ex) {
-            Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+            
+            //Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
         }
         }
     }//GEN-LAST:event_jList1MouseClicked
@@ -829,7 +1251,7 @@ public class principal extends javax.swing.JFrame {
             jList1.setModel(listModelNuevo);
             jTextField1.setText(FM.getCurrentFolder().FullName().toString());
         } catch (Exception ex) {
-            Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -860,7 +1282,12 @@ public class principal extends javax.swing.JFrame {
 
     private void jButtonNombreArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNombreArchivoActionPerformed
         // TODO add your handling code here:
-        Crear(2);
+        if (FM.QSpaceFree()<jTextContenidoArchivo.getText().length()){
+        JOptionPane.showMessageDialog(null, "Espacio de disco: "+String.valueOf(FM.QSpaceFree())+"\nEl tamaño del archivo es mayor al espacio del disco.");   
+        }
+        else{
+            Crear(2);
+        }
     }//GEN-LAST:event_jButtonNombreArchivoActionPerformed
 
     private void jButtonVerPropiedadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerPropiedadesActionPerformed
@@ -875,7 +1302,9 @@ public class principal extends javax.swing.JFrame {
             jLabelTamanio.setText(String.valueOf(FM.VerPropiedades().getSize()));
             jLabelUltimaModificacion.setText(FM.VerPropiedades().getLastModifiedDate().toString());            
         } catch (Exception ex) {
-            Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "No se puede realizar la operación.");
+            
+//Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
         }
         }
     }//GEN-LAST:event_jButtonVerPropiedadesActionPerformed
@@ -899,10 +1328,12 @@ public class principal extends javax.swing.JFrame {
             // TODO add your handling code here:
             FM.SelectFile("./"+jLabelFile.getText());
             jTextAreaContFile.setText("");
-            System.out.println(jLabelFile.getText());
+            //System.out.println(jLabelFile.getText());
             jTextAreaContFile.setText(FM.ContFile());
         } catch (Exception ex) {
-            Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Los directrios no tienen contenido.");
+            
+//Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
         }
         }
     }//GEN-LAST:event_jButtonContFileActionPerformed
@@ -919,21 +1350,323 @@ public class principal extends javax.swing.JFrame {
         jPanelModFile.setVisible(true);
     }//GEN-LAST:event_jRadioButton4MouseClicked
 
+    private void jButtonModFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModFileActionPerformed
+        // TODO add your handling code here:
+        if (jLabelFileMod.getText()==".."){
+        JOptionPane.showMessageDialog(null, "Debe seleccionar un archivo!");   
+        }
+        else{
+        try {
+            // TODO add your handling code here:
+            FM.SelectFile("./"+jLabelFileMod.getText());
+            jTextAreaModFile.setText("");
+            jTextAreaModFile.setText(FM.ContFile());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Los directrios no tienen contenido.");
+            //Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }
+    }//GEN-LAST:event_jButtonModFileActionPerformed
+
+    private void jButtonModFile2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModFile2ActionPerformed
+        
+        if (FM.QSpaceFree()<jTextAreaModFile.getText().length()){
+            JOptionPane.showMessageDialog(null, "Espacio de disco: "+String.valueOf(FM.QSpaceFree())+"\nEl tamaño del archivo es mayor al espacio del disco.");   
+        }
+        else
+        {
+            try {
+                FM.SelectFile(jLabelFileMod.getText());
+                FM.ModFile(jTextAreaModFile.getText());
+                JOptionPane.showMessageDialog(null, "El archivo "+jTextNombreDirectorio.getText()+" se ha modificado correctamente!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "No se puede realizar la operación.");
+            //Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jButtonModFile2ActionPerformed
+
+    private void jRadioButton8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton8MouseClicked
+        // TODO add your handling code here:
+        Oculta();
+        jPanelRemove.setVisible(true);
+    }//GEN-LAST:event_jRadioButton8MouseClicked
+
+    
+    private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
+        try {
+            // TODO add your handling code here:
+            FM.SelectFile(jLabelFileEliminar.getText());
+            FM.ReMove();
+            //Se limpia la lista
+            DefaultListModel listModel = (DefaultListModel) jList1.getModel();
+            listModel.removeAllElements();
+            //Se obtienen los directorios y archivos que tiene el directorio seleccionado
+            List<Node> ListaFolders = new ArrayList<Node>();
+            DefaultListModel listModelNuevo = (DefaultListModel) jList1.getModel();
+            ListaFolders = FM.ListarDir();
+            listModelNuevo.add(0, "..");
+            for (int i = 1; i < ListaFolders.size()+1; i++) {
+                //System.out.println(ListaFolders.get(i).FullName());
+                listModelNuevo.add(i, ListaFolders.get(i-1).FullName());
+            }
+            //Asociar el modelo de lista al JList
+            jList1.setModel(listModelNuevo);
+            JOptionPane.showMessageDialog(null, "El archivo "+jLabelFileEliminar.getText()+" se ha eliminado correctamente!");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "No se puede eliminar el archivo/directorio seleccionado.");
+            
+            //Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonEliminarActionPerformed
+
+    private void jRadioButton7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton7MouseClicked
+        // TODO add your handling code here:
+        Oculta();
+        jPanelMover.setVisible(true);
+    }//GEN-LAST:event_jRadioButton7MouseClicked
+
+    private void jRadioButton6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton6MouseClicked
+        // TODO add your handling code here:
+        Oculta();
+        jPanelCopy.setVisible(true);
+    }//GEN-LAST:event_jRadioButton6MouseClicked
+
+    private void jRadioButton9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton9MouseClicked
+        // TODO add your handling code here:
+        Oculta();
+        jPanelBuscar.setVisible(true);
+        
+    }//GEN-LAST:event_jRadioButton9MouseClicked
+
+    private void jRadioButton10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton10MouseClicked
+          //Crear llamada a la funcion Tree
+        Oculta();
+        jPanelTree.setVisible(true);
+        Tree();
+    }//GEN-LAST:event_jRadioButton10MouseClicked
+
+    
+    private void jButtonMoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMoverActionPerformed
+        try {
+            // TODO add your handling code here:
+            FM.SelectFile(jLabelFileMoverOld.getText());
+            FM.Move(jTextFieldRutaNueva.getText(), true);
+            //Se limpia la lista
+            DefaultListModel listModel = (DefaultListModel) jList1.getModel();
+            listModel.removeAllElements();
+            //Se obtienen los directorios y archivos que tiene el directorio seleccionado
+            List<Node> ListaFolders = new ArrayList<>();
+            DefaultListModel listModelNuevo = (DefaultListModel) jList1.getModel();
+            ListaFolders = FM.ListarDir();
+            listModelNuevo.add(0, "..");
+            for (int i = 1; i < ListaFolders.size()+1; i++) {
+                //System.out.println(ListaFolders.get(i).FullName());
+                listModelNuevo.add(i, ListaFolders.get(i-1).FullName());
+            }
+            
+            //Asociar el modelo de lista al JList
+            jList1.setModel(listModelNuevo);
+            jTextField1.setText(FM.getCurrentFolder().FullName());
+            JOptionPane.showMessageDialog(null, "Archivo-Directorio "+jTextFieldRutaNueva.getText()+" movido correctamente!");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "No se puede mover el archivo/directorio.");
+            
+            //Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonMoverActionPerformed
+
+    private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
+        try {
+            // TODO add your handling code here:
+            List<File> ListaFile = new ArrayList<>();
+            ListaFile = FM.Find(jTextFieldBuscar.getText());
+            if (ListaFile.size()==0){
+            
+                jTextAreaBuscar.setText("No se encuentra ningún archivo con ese nombre.");
+            }
+            
+            else{
+            String Rutas="";
+            String Path="";
+            for (int i = 0; i < ListaFile.size(); i++) {
+                Rutas+=ListaFile.get(i).Path();
+                Rutas+="\n";
+                
+            }
+            jTextAreaBuscar.setText(Rutas);
+            }
+            //jListBuscar.setModel(listModel1);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "No se puede buscar el archivo/directorio solicitado.");
+            //Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonBuscarActionPerformed
+
+    private void jRadioButton11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton11MouseClicked
+        // TODO add your handling code here:
+        jLabelDe.setText("Real   ");
+        jLabelA.setText("Virtual");
+        jTextFieldCopyDe.setText("");
+        jTextFieldCopyA.setText("");
+        
+    }//GEN-LAST:event_jRadioButton11MouseClicked
+
+    private void jRadioButton12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton12MouseClicked
+        // TODO add your handling code here:
+        jLabelDe.setText("Virtual");
+        jLabelA.setText("Real   ");
+        jTextFieldCopyDe.setText("");
+        jTextFieldCopyA.setText("");
+    }//GEN-LAST:event_jRadioButton12MouseClicked
+
+    private void jRadioButton13MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButton13MouseClicked
+        // TODO add your handling code here:
+        jLabelDe.setText("Virtual Viejo");
+        jLabelA.setText("Virtual Nuevo");
+        jTextFieldCopyDe.setText("");
+        jTextFieldCopyA.setText("");
+    }//GEN-LAST:event_jRadioButton13MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        //C:\\Users\\Fabian\\Desktop\\disco.txt
+        if (jRadioButton11.isSelected()==true)
+        {
+            try {
+                FM.Import(jTextFieldCopyDe.getText(), jTextFieldCopyA.getText());
+                //Se limpia la lista
+                DefaultListModel listModel = (DefaultListModel) jList1.getModel();
+                listModel.removeAllElements();
+                //Se obtienen los directorios y archivos que tiene el directorio seleccionado
+                List<Node> ListaFolders = new ArrayList<>();
+                DefaultListModel listModelNuevo = (DefaultListModel) jList1.getModel();
+                ListaFolders = FM.ListarDir();
+                listModelNuevo.add(0, "..");
+                for (int i = 1; i < ListaFolders.size()+1; i++) {
+                    //System.out.println(ListaFolders.get(i).FullName());
+                    listModelNuevo.add(i, ListaFolders.get(i-1).FullName());
+                }
+                jList1.setModel(listModelNuevo);
+                jTextField1.setText(FM.getCurrentFolder().FullName());
+                JOptionPane.showMessageDialog(null, "Movido correctamente!");            
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Real a Virtual \nNo se pudo realizar la operación correctamente, verifique que los datos ingresados esten correctos.");            }
+        }
+        else if (jRadioButton12.isSelected()==true)
+        {
+            try {
+                FM.SelectFile(jTextFieldCopyDe.getText());
+                JOptionPane.showMessageDialog(null, "SELECT BUENO");
+                FM.Export(jTextFieldCopyA.getText());
+                //Se limpia la lista
+                DefaultListModel listModel = (DefaultListModel) jList1.getModel();
+                listModel.removeAllElements();
+                //Se obtienen los directorios y archivos que tiene el directorio seleccionado
+                List<Node> ListaFolders = new ArrayList<>();
+                DefaultListModel listModelNuevo = (DefaultListModel) jList1.getModel();
+                ListaFolders = FM.ListarDir();
+                listModelNuevo.add(0, "..");
+                for (int i = 1; i < ListaFolders.size()+1; i++) {
+                    //System.out.println(ListaFolders.get(i).FullName());
+                    listModelNuevo.add(i, ListaFolders.get(i-1).FullName());
+                }
+
+                //Asociar el modelo de lista al JList
+                jList1.setModel(listModelNuevo);
+                jTextField1.setText(FM.getCurrentFolder().FullName());
+
+                JOptionPane.showMessageDialog(null, "Movido correctamente!");            
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "No se pudo realizar la operación correctamente, verifique que los datos ingresados esten correctos.");            
+            }
+        }
+        else if (jRadioButton13.isSelected()==true)
+        {
+            try {
+                FM.SelectFile(jTextFieldCopyDe.getText());
+                JOptionPane.showMessageDialog(null, "SELECT BUENO");
+                FM.Copy(jTextFieldCopyA.getText());
+                //Se limpia la lista
+                DefaultListModel listModel = (DefaultListModel) jList1.getModel();
+                listModel.removeAllElements();
+                //Se obtienen los directorios y archivos que tiene el directorio seleccionado
+                List<Node> ListaFolders = new ArrayList<>();
+                DefaultListModel listModelNuevo = (DefaultListModel) jList1.getModel();
+                ListaFolders = FM.ListarDir();
+                listModelNuevo.add(0, "..");
+                for (int i = 1; i < ListaFolders.size()+1; i++) {
+                    //System.out.println(ListaFolders.get(i).FullName());
+                    listModelNuevo.add(i, ListaFolders.get(i-1).FullName());
+                }
+                //Asociar el modelo de lista al JList
+                jList1.setModel(listModelNuevo);
+                jTextField1.setText(FM.getCurrentFolder().FullName());
+                JOptionPane.showMessageDialog(null, "Movido correctamente!");            
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "No se pudo realizar la operación correctamente, verifique que los datos ingresados esten correctos.");            
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una opción!");            
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     public void Oculta(){
     jPanelCrearDirectorio.setVisible(false);
     jPanelCrearArchivo.setVisible(false);
     jPanelVerPropiedades.setVisible(false);
     jPanelContFile.setVisible(false);
     jPanelModFile.setVisible(false);
+    jPanelRemove.setVisible(false);
+    jPanelMover.setVisible(false);
+    jPanelBuscar.setVisible(false);
+    jPanelCopy.setVisible(false);
+    jPanelTree.setVisible(false);
+    }
+
+    public void Tree()
+    {
+        Root raiz = FM.getRoot();
+        DefaultTreeModel model =(DefaultTreeModel) jTreeFs.getModel();
+        DefaultMutableTreeNode root=(DefaultMutableTreeNode) model.getRoot();
+        root.setUserObject("Raíz");
+        root.removeAllChildren();
+        Tree(raiz,root);
+    }
+    public void Tree(Folder raiz, DefaultMutableTreeNode root2)
+    {
+        DefaultMutableTreeNode newdir = new DefaultMutableTreeNode();
+        List<Node> children = raiz.getChildren();
+        for (Node child : children)
+        {
+            if(child instanceof Folder)
+            {
+                DefaultTreeModel model =(DefaultTreeModel) jTreeFs.getModel();
+                newdir = new DefaultMutableTreeNode(child.FullName());
+                root2.add(newdir);
+                model.reload();
+                Tree((Folder)child,newdir);
+            }
+            else
+            {
+                DefaultTreeModel model =(DefaultTreeModel) jTreeFs.getModel();
+                DefaultMutableTreeNode selectednode = root2;
+                DefaultMutableTreeNode newfile =new DefaultMutableTreeNode(child.getName());
+                model.insertNodeInto(newfile, selectednode, selectednode.getChildCount());
+                model.reload();
+            }
+        }
     }
     public void Crear(int valor)
     {
         try {
             if (valor==1){
-            FM.MkDir(jTextNombreDirectorio.getText());
+            FM.MkDir(jTextNombreDirectorio.getText(),true);
             }
             else{
-            FM.File(jTextNombreArchivo.getText(), jTextExtensionArchivo.getText(),jTextContenidoArchivo.getText());                        
+            FM.File(jTextNombreArchivo.getText(), jTextExtensionArchivo.getText(),jTextContenidoArchivo.getText(),true);                        
             }
             //Se limpia la lista
             DefaultListModel listModel = (DefaultListModel) jList1.getModel();
@@ -960,7 +1693,8 @@ public class principal extends javax.swing.JFrame {
             jTextContenidoArchivo.setText("");
             }
          } catch (Exception ex) {
-            Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "No se puede crear archivo/directorio.");
+            //Logger.getLogger(principal.class.getName()).log(Level.SEVERE, null, ex);
         }            
     }
     /**
@@ -1006,13 +1740,26 @@ public class principal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup OpcionesFS;
+    private javax.swing.ButtonGroup buttonGroupCopy;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonBuscar;
     private javax.swing.JButton jButtonContFile;
+    private javax.swing.JButton jButtonEliminar;
+    private javax.swing.JButton jButtonModFile;
+    private javax.swing.JButton jButtonModFile2;
+    private javax.swing.JButton jButtonMover;
     private javax.swing.JButton jButtonNombreArchivo;
     private javax.swing.JButton jButtonNombreDirectorio;
     private javax.swing.JButton jButtonVerPropiedades;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1021,11 +1768,15 @@ public class principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelA;
     private javax.swing.JLabel jLabelCreacion;
+    private javax.swing.JLabel jLabelDe;
     private javax.swing.JLabel jLabelFile;
+    private javax.swing.JLabel jLabelFileEliminar;
+    private javax.swing.JLabel jLabelFileMod;
+    private javax.swing.JLabel jLabelFileMoverOld;
     private javax.swing.JLabel jLabelTamanio;
     private javax.swing.JLabel jLabelUltimaModificacion;
-    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -1034,13 +1785,21 @@ public class principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanelBuscar;
     private javax.swing.JPanel jPanelContFile;
+    private javax.swing.JPanel jPanelCopy;
     private javax.swing.JPanel jPanelCrearArchivo;
     private javax.swing.JPanel jPanelCrearDirectorio;
     private javax.swing.JPanel jPanelModFile;
+    private javax.swing.JPanel jPanelMover;
+    private javax.swing.JPanel jPanelRemove;
+    private javax.swing.JPanel jPanelTree;
     private javax.swing.JPanel jPanelVerPropiedades;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton10;
+    private javax.swing.JRadioButton jRadioButton11;
+    private javax.swing.JRadioButton jRadioButton12;
+    private javax.swing.JRadioButton jRadioButton13;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
@@ -1051,11 +1810,22 @@ public class principal extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextArea jTextAreaBuscar;
     private javax.swing.JTextArea jTextAreaContFile;
+    private javax.swing.JTextArea jTextAreaModFile;
     private javax.swing.JTextField jTextContenidoArchivo;
     private javax.swing.JTextField jTextExtensionArchivo;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextFieldBuscar;
+    private javax.swing.JTextField jTextFieldCopyA;
+    private javax.swing.JTextField jTextFieldCopyDe;
+    private javax.swing.JTextField jTextFieldRutaNueva;
     private javax.swing.JTextField jTextNombreArchivo;
     private javax.swing.JTextField jTextNombreDirectorio;
+    private javax.swing.JTree jTreeFs;
     // End of variables declaration//GEN-END:variables
 }
