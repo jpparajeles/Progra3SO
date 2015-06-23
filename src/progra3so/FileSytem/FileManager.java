@@ -564,6 +564,7 @@ public class FileManager {
             String fileName = new SimpleDateFormat("yyyyMMddhhmm'.txt'").format(new Date());
             File tempF = (File) CurrentNode;
             File(tempF.getName()+fileName,tempF.getExtention(),ContFile(),true);
+            SelectFile(tempF.getName()+fileName);
             Move(target, true);
         }
         else
