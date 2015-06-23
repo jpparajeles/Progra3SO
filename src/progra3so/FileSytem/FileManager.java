@@ -356,7 +356,7 @@ public class FileManager {
     {
         String[] split = name.split("\\.");
         file.setName(split[0]);
-        file.setExtention(split[1]);
+        file.setExtention("."+split[1]);
     }
     
     public void Rename(Folder folder, String name)
