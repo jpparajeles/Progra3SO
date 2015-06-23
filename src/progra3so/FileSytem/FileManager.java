@@ -501,7 +501,9 @@ public class FileManager {
         if(CurrentNode instanceof File)
         {
             BufferedWriter out = new BufferedWriter(new FileWriter(URL));
-            out.write(ContFile());        
+            out.write(ContFile());
+            out.flush();
+            out.close();
         }
         else
         {
